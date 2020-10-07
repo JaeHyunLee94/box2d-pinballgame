@@ -58,14 +58,18 @@ int init(){
         exit(EXIT_FAILURE);
     }
     
-    glClearColor( 0, 0, 0, 0);
     
-
-    glEnable(GL_DEPTH_TEST);
-    // Accept fragment if it closer to the camera than the former one
-    glDepthFunc(GL_LESS);
-    // Cull triangles which normal is not towards the camera
+    
+    glClearColor( 0.2, 0.2, 0.2, 0.5f);
+    
+//    glEnable(GL_DEPTH_TEST);
+//    // Accept fragment if it closer to the camera than the former one
+//    glDepthFunc(GL_LESS);
+//    // Cull triangles which normal is not towards the camera
     glEnable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
     return 0;
 }
 

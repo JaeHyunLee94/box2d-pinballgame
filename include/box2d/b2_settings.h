@@ -54,8 +54,10 @@
 // User data
 
 /// You can define this to inject whatever data you want in b2Body
+
 struct b2BodyUserData
 {
+   
 	b2BodyUserData()
 	{
 		pointer = 0;
@@ -63,6 +65,8 @@ struct b2BodyUserData
 
 	/// For legacy compatibility
 	uintptr_t pointer;
+    
+    
 };
 
 /// You can define this to inject whatever data you want in b2Fixture

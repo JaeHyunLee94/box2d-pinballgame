@@ -16,6 +16,7 @@
 		87D425F1252B704B00C43156 /* libGLEW.2.2.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 87D425EF252B704B00C43156 /* libGLEW.2.2.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		87D425F4252B8DA100C43156 /* libglfw.3.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 87D425F3252B8DA100C43156 /* libglfw.3.3.dylib */; };
 		87D425F5252B8DA100C43156 /* libglfw.3.3.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 87D425F3252B8DA100C43156 /* libglfw.3.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		87D425F7252E411F00C43156 /* geometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87D425F6252E411F00C43156 /* geometry.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -56,6 +57,8 @@
 		87D425EA252B6A5C00C43156 /* libbox2d.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbox2d.a; path = lib/libbox2d.a; sourceTree = "<group>"; };
 		87D425EF252B704B00C43156 /* libGLEW.2.2.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.2.2.0.dylib; path = lib/libGLEW.2.2.0.dylib; sourceTree = "<group>"; };
 		87D425F3252B8DA100C43156 /* libglfw.3.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.3.dylib; path = lib/libglfw.3.3.dylib; sourceTree = "<group>"; };
+		87D425F6252E411F00C43156 /* geometry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = geometry.cpp; sourceTree = "<group>"; };
+		87D425F8252E53E500C43156 /* geometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = geometry.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +104,8 @@
 				87D425E0252B6A1F00C43156 /* game.hpp */,
 				87D425E4252B6A1F00C43156 /* signal.h */,
 				87D425D2252B699D00C43156 /* main.cpp */,
+				87D425F6252E411F00C43156 /* geometry.cpp */,
+				87D425F8252E53E500C43156 /* geometry.h */,
 			);
 			path = pinball_mini;
 			sourceTree = "<group>";
@@ -174,6 +179,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				87D425D3252B699D00C43156 /* main.cpp in Sources */,
+				87D425F7252E411F00C43156 /* geometry.cpp in Sources */,
 				87D425E5252B6A1F00C43156 /* controller.cpp in Sources */,
 				87D425E6252B6A1F00C43156 /* game.cpp in Sources */,
 			);

@@ -1,3 +1,5 @@
+
+//
 //
 //  game.cpp
 //  sfml_rigidBody
@@ -14,6 +16,7 @@
 #include <OpenGL/OpenGL.h>
 
 #include <GLUT/GLUT.h>
+#include "geometry.cpp"
 
 //constructor
 Game::Game(){
@@ -22,7 +25,7 @@ Game::Game(){
     Gravity=b2Vec2(0,-9.8);
     m_obs_mov_rect_speed.Set(3, 0);
     world=new b2World(Gravity);
-    
+//    world->SetContactListener(&my_listner);
     
 }
 
@@ -60,16 +63,17 @@ void Game::createMap(){
         vs[14].Set(-18, -22);
         vs[15].Set(-3, -22);
         
-       
+        
         vs[16].Set(-15, -10);
         vs[17].Set(-15, 25);
         
-       
+        
         
         
         b2ChainShape loop;
         loop.CreateLoop(vs, 18);
         b2FixtureDef fd;
+        fd.restitution=0.2f;
         fd.shape = &loop;
         fd.density = 0.0f;
         ground->CreateFixture(&fd);
@@ -94,7 +98,8 @@ void Game::createMap(){
         
         b2FixtureDef fd;
         fd.shape = &box;
-        fd.density = 0.1f;
+        fd.restitution=1.0f;
+        fd.density = 2.f;
         
         leftFlipper->CreateFixture(&fd);
         rightFlipper->CreateFixture(&fd);
@@ -103,7 +108,7 @@ void Game::createMap(){
         jd.bodyA = ground;
         jd.localAnchorB.SetZero();
         jd.enableMotor = true;
-        jd.maxMotorTorque = 1000.0f;
+        jd.maxMotorTorque = 5000.0f;
         jd.enableLimit = true;
         
         jd.motorSpeed = 0.0f;
@@ -122,6 +127,7 @@ void Game::createMap(){
         jd.upperAngle = 5.0f * b2_pi / 180.0f;
         m_rightJoint = (b2RevoluteJoint*)world->CreateJoint(&jd);
     }
+    //ball
     {
         
         
@@ -133,13 +139,16 @@ void Game::createMap(){
         m_ball = world->CreateBody(&bd);
         
         b2CircleShape shape;
-        shape.m_radius = 0.3;
+        shape.m_radius = 0.5;
         
         b2FixtureDef fd;
         fd.shape = &shape;
         fd.density = 1.0f;
+        fd.friction=0.3f;
+        
         m_ball->CreateFixture(&fd);
-        m_ball->ApplyLinearImpulse(b2Vec2(0,10), m_ball->GetLocalCenter(), true);
+        m_ball->ApplyLinearImpulse(b2Vec2(0,100), m_ball->GetLocalCenter(), true);
+        m_ball->SetLinearDamping(0.1f);
     }
     
     //rotate obstacle
@@ -216,6 +225,7 @@ void Game::createMap(){
         fd.density = 0.2f;
         fd.restitution=1.0f;
         
+        
         for(int i=0;i<7;i++){
             m_obs_nail[i]->CreateFixture(&fd);
             
@@ -238,6 +248,7 @@ void Game::createMap(){
             shape.SetAsBox(2, 0.2);
             
             b2FixtureDef fd;
+            fd.restitution=0.8f;
             fd.shape = &shape;
             fd.density = 0.2f;
             
@@ -272,11 +283,28 @@ void Game::createMap(){
             
             m_obs_blackhole->CreateFixture(&fd);
             
+        }
+       
+        {
+            b2BodyDef bd;
+            bd.position.Set(0, -26);
+            bd.type=b2_staticBody;
+            m_water=world->CreateBody(&bd);
             
+            b2PolygonShape shape;
+            shape.SetAsBox(18, 2);
+            
+            
+            b2FixtureDef fd;
+            fd.isSensor=true;
+            fd.shape=&shape;
+            fd.density=4.0f;
+            
+            m_water->CreateFixture(&fd);
             
         }
-    
-      
+        
+        
         
         
     }
@@ -310,7 +338,7 @@ void Game::render(){
         for (b2Fixture* FixtureIterator = BodyIterator->GetFixtureList(); FixtureIterator != 0; FixtureIterator = FixtureIterator->GetNext()){
             
             if(FixtureIterator->GetType()==b2Shape::e_circle){
-//                std::cout << "circle pos: "<<bodyPos.x << " "<< bodyPos.y<<"\n";
+                //                std::cout << "circle pos: "<<bodyPos.x << " "<< bodyPos.y<<"\n";
                 b2CircleShape* circleShape = (b2CircleShape*)FixtureIterator->GetShape();
                 DrawSolidCircle(bodyPos, circleShape->m_radius, b2Vec2(0,1),b2Color(1,0,0));
                 
@@ -324,7 +352,9 @@ void Game::render(){
             }else if(FixtureIterator->GetType()==b2Shape::e_polygon){
                 
                 b2PolygonShape* polygonShape = (b2PolygonShape*)FixtureIterator->GetShape();
-                DrawSolidPolygon(polygonShape->m_vertices, polygonShape->m_count, b2Color(0,1,0),bodyPos,bodyrot);
+                b2Color clr(0,1,0);
+                if(FixtureIterator->IsSensor()) clr.Set(0.5, 0.5, 1);
+                DrawSolidPolygon(polygonShape->m_vertices, polygonShape->m_count, clr,bodyPos,bodyrot);
             }else{
                 
                 b2ChainShape* chainShape = (b2ChainShape*)FixtureIterator->GetShape();
@@ -346,6 +376,7 @@ void Game::step(){
     
     checkReverse();
     checkBlackHole();
+    checkBuoyancy();
     world->Step(timeStep, velocityIter, positionIter);
     
 }
@@ -356,13 +387,13 @@ void Game::doFlip(int signal){
     switch (signal) {
             
         case GameSignal::DO_FLIP:
-            m_leftJoint->SetMotorSpeed(20.0f);
-            m_rightJoint->SetMotorSpeed(-20.0f);
+            m_leftJoint->SetMotorSpeed(100.0f);
+            m_rightJoint->SetMotorSpeed(-100.0f);
             break;
             
         case GameSignal::DO_NOT_FLIP:
-            m_leftJoint->SetMotorSpeed(-10.0f);
-            m_rightJoint->SetMotorSpeed(10.0f);
+            m_leftJoint->SetMotorSpeed(-70.0f);
+            m_rightJoint->SetMotorSpeed(70.0f);
             break;
             
         default:
@@ -391,13 +422,42 @@ void Game::checkBlackHole(){
         b2Vec2 forceDir=blackholePos-nowPos;
         
         float r=forceDir.Normalize();
-    
+        
         forceDir*=100/(r);
         
         m_ball->ApplyForce(forceDir-Gravity, nowPos, true);
         
         
     }
+    
+    
+}
+
+void Game::checkBuoyancy(){
+    
+    
+//    std::set<fixturePair>::iterator it = my_listner.m_fixturePairs.begin();
+//      std::set<fixturePair>::iterator end = my_listner.m_fixturePairs.end();
+//      while (it != end) {
+//
+//          //fixtureA is the fluid
+//          b2Fixture* fixtureA = it->first;
+//          b2Fixture* fixtureB = it->second;
+//
+//          float density = fixtureA->GetDensity();
+//
+//          std::vector<b2Vec2> intersectionPoints;
+//          if ( my_listner.findIntersectionOfFixtures(fixtureA, fixtureB, intersectionPoints) ) {
+//
+//              //find centroid
+//              float area = 0;
+//              b2Vec2 centroid = my_listner.ComputeCentroid( intersectionPoints, area);
+//
+//              //apply buoyancy stuff here...
+//          }
+//
+//          ++it;
+//      }
     
     
 }
@@ -410,7 +470,7 @@ void Game::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color&
     glTranslatef(bodyPos.x, bodyPos.y, 0.0f);
     glRotatef(rot, 0.0f, 0.0f, 1.0f);
     glBegin(GL_LINE_LOOP);
-    glColor4f(color.r, color.g, color.b, 0.5f);
+    glColor4f(color.r, color.g, color.b, 1.0f);
     for (int i = 0; i < vertexCount; i++) {
         b2Vec2 v = vertices[i];
         
@@ -428,11 +488,15 @@ void Game::DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, const b2C
     
     glTranslatef(bodyPos.x, bodyPos.y, 0.0f);
     glRotatef(rot, 0.0f, 0.0f, 1.0f);
+  
+    
+    
     glBegin(GL_TRIANGLE_FAN);
-    glColor4f(color.r, color.g, color.b, 0.5f);
+
+    glColor4f(color.r, color.g, color.b, 0.8f);
     for (int i = 0; i < vertexCount; i++) {
         b2Vec2 v = vertices[i];
-
+        
         glVertex2f(v.x , v.y );
     }
     glEnd();
@@ -447,8 +511,10 @@ void Game::DrawCircle(const b2Vec2& center, float radius, const b2Color& color) 
     
     glPushMatrix();
 
-    glColor4f(color.r, color.g, color.b, 1);
+    
     glBegin(GL_LINE_LOOP);
+ 
+    glColor4f(color.r, color.g, color.b, 0.5f);
     GLfloat glVertices[vertexCount * 2];
     for (int32 i = 0; i < k_segments; ++i) {
         b2Vec2 v = center + radius * b2Vec2(cos(theta), sin(theta));
@@ -465,15 +531,17 @@ void Game::DrawSolidCircle(const b2Vec2& center, float radius, const b2Vec2& axi
     const float k_increment = 2.0f * b2_pi / k_segments;
     float theta = 0.0f;
     
-    glColor4f(color.r, color.g, color.b, 0.5f);
     glBegin(GL_TRIANGLE_FAN);
-    GLfloat glVertices[vertexCount * 2];
+    
+    glColor4f(color.r, color.g, color.b, 0.5f);
+    
     for (int32 i = 0; i < k_segments; ++i) {
         b2Vec2 v = center + radius * b2Vec2(cos(theta), sin(theta));
         glVertex2f(v.x , v.y);
         theta += k_increment;
     }
     glEnd();
+    
     
     
     
@@ -484,18 +552,13 @@ void Game::DrawSolidCircle(const b2Vec2& center, float radius, const b2Vec2& axi
 void Game::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& color) {
     
     
+    
     glColor4f(color.r, color.g, color.b, 1);
-
+    
     glBegin(GL_LINES);
+
     glVertex2f(p1.x , p1.y );
     glVertex2f(p2.x , p2.y );
     glEnd();
     
 }
-
-
-
-
-
-
-

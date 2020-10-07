@@ -9,6 +9,13 @@
 #define game_hpp
 
 #include <box2d/box2d.h>
+#include "geometry.cpp"
+
+struct b2UserData{
+    b2Color color;
+    
+    bool is_solid;
+};
 
 
 
@@ -33,6 +40,21 @@ public:
     b2Body* rightFlipper;
     b2Body* m_obs_freeball;
     b2Body* m_obs_blackhole;
+    b2Body* m_water;
+    
+//    Myb2ContactListener my_listner;
+    
+    
+    
+//    b2BodyUserData ground_data;
+//    b2BodyUserData m_ball_data;
+//    b2BodyUserData m_flipper_data;
+//    b2BodyUserData m_obs_rotate_data;
+//    b2BodyUserData m_obs_nail_data;
+//    b2BodyUserData m_obs_freeball_data;
+//    b2BodyUserData m_obs_blackhole_data;
+//    b2BodyUserData m_obs_mov_rect_data;
+//    b2BodyUserData m_water_data;
     
     b2RevoluteJoint* m_leftJoint;
     b2RevoluteJoint* m_rightJoint;
@@ -81,6 +103,8 @@ public:
 //    void DrawTransform(const b2Transform& xf);
     
     void DrawPoint(const b2Vec2& p, float size, const b2Color& color);
+    
+    void checkBuoyancy();
     
 //    void DrawString(int x, int y, const char* string, ...);
 //
