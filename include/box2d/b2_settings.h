@@ -55,12 +55,14 @@
 
 /// You can define this to inject whatever data you want in b2Body
 
+
 struct b2BodyUserData
 {
-   
+    
 	b2BodyUserData()
 	{
 		pointer = 0;
+       
 	}
 
 	/// For legacy compatibility

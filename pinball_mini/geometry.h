@@ -7,27 +7,14 @@
 
 #ifndef geometry_h
 #define geometry_h
-//
-//  geometry.cpp
-//  pinball_mini
-//
-//  Created by 이재현 on 2020/10/08.
-//
 
 
 #include <box2d/box2d.h>
 #include <iostream>
 #include <vector>
 #include <set>
-#include <math.h>
 
 typedef std::pair<b2Fixture*, b2Fixture*> fixturePair;
-
-//class member variable
-
-
-
-
 
 
 class Myb2ContactListener: public b2ContactListener{
@@ -45,9 +32,6 @@ public:
     
     
 };
-
-
-
 
 
 

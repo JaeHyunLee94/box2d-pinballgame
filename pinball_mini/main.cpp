@@ -9,7 +9,6 @@
 
 #include <iostream>
 #include <GL/glew.h>
-
 #include <GLFW/glfw3.h>
 
 #include "game.hpp"
@@ -26,7 +25,7 @@ int init(){
         std::cout << "glfw init failed!!\n";
         return 1;
     }
-//
+
 //    glfwWindowHint(GL_SAMPLES, 4);
 //    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 //    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
@@ -60,13 +59,9 @@ int init(){
     
     
     
-    glClearColor( 0.2, 0.2, 0.2, 0.5f);
+    glClearColor( 0.2, 0.2, 0.2, 1.0f);
     
-//    glEnable(GL_DEPTH_TEST);
-//    // Accept fragment if it closer to the camera than the former one
-//    glDepthFunc(GL_LESS);
-//    // Cull triangles which normal is not towards the camera
-    glEnable(GL_CULL_FACE);
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     

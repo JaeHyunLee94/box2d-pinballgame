@@ -9,13 +9,12 @@
 #define game_hpp
 
 #include <box2d/box2d.h>
-#include "geometry.cpp"
-
-struct b2UserData{
-    b2Color color;
-    
-    bool is_solid;
-};
+#include "geometry.h"
+//struct b2UserData
+//{
+//    b2Color color;
+//    bool is_solid;
+//};
 
 
 
@@ -41,11 +40,14 @@ public:
     b2Body* m_obs_freeball;
     b2Body* m_obs_blackhole;
     b2Body* m_water;
+    b2Body* m_open1;
+    b2Body* m_open2;
     
-//    Myb2ContactListener my_listner;
+    Myb2ContactListener my_listner;
     
     
     
+//    
 //    b2BodyUserData ground_data;
 //    b2BodyUserData m_ball_data;
 //    b2BodyUserData m_flipper_data;
@@ -55,7 +57,7 @@ public:
 //    b2BodyUserData m_obs_blackhole_data;
 //    b2BodyUserData m_obs_mov_rect_data;
 //    b2BodyUserData m_water_data;
-    
+
     b2RevoluteJoint* m_leftJoint;
     b2RevoluteJoint* m_rightJoint;
     
@@ -63,11 +65,8 @@ public:
     
     
     
-   
-    
-   
-    
-//    b2GLDraw fooDrawInstance;
+    float drag_coeff=0.1f;
+
     
     float timeStep=1.f/60;
     int velocityIter=10;

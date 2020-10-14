@@ -15,8 +15,10 @@
 #include <GL/glew.h>
 #include <OpenGL/OpenGL.h>
 
-#include <GLUT/GLUT.h>
-#include "geometry.cpp"
+#include "geometry.h"
+#include <set>
+#include <vector>
+#include <algorithm>
 
 //constructor
 Game::Game(){
@@ -25,8 +27,9 @@ Game::Game(){
     Gravity=b2Vec2(0,-9.8);
     m_obs_mov_rect_speed.Set(3, 0);
     world=new b2World(Gravity);
-//    world->SetContactListener(&my_listner);
+    world->SetContactListener(&my_listner);
     
+
 }
 
 Game::~Game(){
@@ -41,6 +44,8 @@ void Game::createMap(){
     b2Body* ground = NULL;
     {
         b2BodyDef bd;
+//        bd.userData=ground_data;
+        
         ground = world->CreateBody(&bd);
         
         b2Vec2 vs[18];
@@ -85,6 +90,7 @@ void Game::createMap(){
         b2Vec2 p1(-5,-20), p2(5,-20);
         
         b2BodyDef bd;
+//        bd.userData=m_flipper_data;
         bd.type = b2_dynamicBody;
         
         bd.position = p1;
@@ -132,6 +138,7 @@ void Game::createMap(){
         
         
         b2BodyDef bd;
+//        bd.userData=m_ball_data;
         bd.position.Set(23, -20);
         bd.type = b2_dynamicBody;
         bd.bullet = true;
@@ -154,6 +161,7 @@ void Game::createMap(){
     //rotate obstacle
     {
         b2BodyDef bd;
+//        bd.userData=m_obs_rotate_data;
         bd.position.Set(8, 11);
         bd.type=b2_kinematicBody;
         
@@ -173,6 +181,7 @@ void Game::createMap(){
     //freeball
     {
         b2BodyDef bd;
+//        bd.userData=m_obs_freeball_data;
         bd.position.Set(-4, 6);
         bd.type=b2_dynamicBody;
         
@@ -198,6 +207,7 @@ void Game::createMap(){
     //nail
     {
         b2BodyDef bd;
+//        bd.userData=m_obs_nail_data;
         bd.type=b2_kinematicBody;
         
         bd.position.Set(-11, 20);
@@ -234,6 +244,7 @@ void Game::createMap(){
         //mov rect
         {
             b2BodyDef bd;
+//            bd.userData=m_obs_mov_rect_data;
             bd.type=b2_kinematicBody;
             
             bd.position.Set(-4, 2);
@@ -267,6 +278,7 @@ void Game::createMap(){
         //blackhole
         {
             b2BodyDef bd;
+//            bd.userData=m_obs_blackhole_data;
             bd.position.Set(5, 5);
             bd.type=b2_staticBody;
             
@@ -284,9 +296,12 @@ void Game::createMap(){
             m_obs_blackhole->CreateFixture(&fd);
             
         }
-       
+        
+        
+        //water
         {
             b2BodyDef bd;
+//            bd.userData=m_water_data;
             bd.position.Set(0, -26);
             bd.type=b2_staticBody;
             m_water=world->CreateBody(&bd);
@@ -298,12 +313,75 @@ void Game::createMap(){
             b2FixtureDef fd;
             fd.isSensor=true;
             fd.shape=&shape;
-            fd.density=4.0f;
+            fd.density=2.0f;
             
             m_water->CreateFixture(&fd);
             
         }
         
+        //open_obstacle
+        {
+            b2BodyDef bd;
+            bd.type=b2_kinematicBody;
+    //        bd.userData=ground_data;
+            
+            m_open1 = world->CreateBody(&bd);
+            m_open2 = world->CreateBody(&bd);
+            
+            b2Vec2 vs[4];
+            vs[3].Set(-8, -4);
+            vs[2].Set(-4, -6);
+            vs[1].Set(-3, -10);
+            vs[0].Set(-7, -9);
+           
+            
+            b2ChainShape loop;
+            loop.CreateLoop(vs, 4);
+            b2FixtureDef fd;
+            fd.restitution=0.2f;
+            fd.shape = &loop;
+            fd.density = 0.0f;
+            m_open1->CreateFixture(&fd);
+            
+            b2Vec2 vs1[4];
+            vs1[0].Set(8, -4);
+            vs1[1].Set(4, -6);
+            vs1[2].Set(3, -10);
+            vs1[3].Set(7, -9);
+           
+            
+            b2ChainShape loop1;
+            loop1.CreateLoop(vs1, 4);
+            b2FixtureDef fd1;
+            fd1.restitution=0.2f;
+            fd1.shape = &loop1;
+            fd1.density = 0.0f;
+            m_open2->CreateFixture(&fd1);
+            
+        }
+        
+        //reflector
+        {
+            b2BodyDef bd;
+
+            bd.position.Set(0, -26);
+            bd.type=b2_staticBody;
+            m_water=world->CreateBody(&bd);
+            
+            b2PolygonShape shape;
+            shape.SetAsBox(18, 2);
+            
+            
+            b2FixtureDef fd;
+            fd.isSensor=true;
+            fd.shape=&shape;
+            fd.density=2.0f;
+            
+            m_water->CreateFixture(&fd);
+            
+        }
+      
+//
         
         
         
@@ -334,6 +412,7 @@ void Game::render(){
         b2Vec2 bodyPos=BodyIterator->GetPosition();
         
         float bodyrot=(BodyIterator->GetAngle())*180/b2_pi;
+
         
         for (b2Fixture* FixtureIterator = BodyIterator->GetFixtureList(); FixtureIterator != 0; FixtureIterator = FixtureIterator->GetNext()){
             
@@ -352,10 +431,12 @@ void Game::render(){
             }else if(FixtureIterator->GetType()==b2Shape::e_polygon){
                 
                 b2PolygonShape* polygonShape = (b2PolygonShape*)FixtureIterator->GetShape();
+                
                 b2Color clr(0,1,0);
                 if(FixtureIterator->IsSensor()) clr.Set(0.5, 0.5, 1);
                 DrawSolidPolygon(polygonShape->m_vertices, polygonShape->m_count, clr,bodyPos,bodyrot);
             }else{
+                
                 
                 b2ChainShape* chainShape = (b2ChainShape*)FixtureIterator->GetShape();
                 DrawPolygon(chainShape->m_vertices, chainShape->m_count, b2Color(0,1,0),bodyPos,bodyrot);
@@ -436,28 +517,32 @@ void Game::checkBlackHole(){
 void Game::checkBuoyancy(){
     
     
-//    std::set<fixturePair>::iterator it = my_listner.m_fixturePairs.begin();
-//      std::set<fixturePair>::iterator end = my_listner.m_fixturePairs.end();
-//      while (it != end) {
-//
-//          //fixtureA is the fluid
-//          b2Fixture* fixtureA = it->first;
-//          b2Fixture* fixtureB = it->second;
-//
-//          float density = fixtureA->GetDensity();
-//
-//          std::vector<b2Vec2> intersectionPoints;
-//          if ( my_listner.findIntersectionOfFixtures(fixtureA, fixtureB, intersectionPoints) ) {
-//
-//              //find centroid
-//              float area = 0;
-//              b2Vec2 centroid = my_listner.ComputeCentroid( intersectionPoints, area);
-//
-//              //apply buoyancy stuff here...
-//          }
-//
-//          ++it;
-//      }
+    std::set<fixturePair>::iterator it = my_listner.m_fixturePairs.begin();
+    std::set<fixturePair>::iterator end = my_listner.m_fixturePairs.end();
+    while (it != end) {
+
+        //fixtureA is the fluid
+        b2Fixture* fixtureA = it->first;
+        b2Fixture* fixtureB = it->second;
+
+        float density = fixtureA->GetDensity();
+        float area=my_listner.IntersectArea(fixtureA, fixtureB, 36, 4);
+        float r=fixtureB->GetShape()->m_radius;
+        b2Vec2 buoyancy_force;
+        buoyancy_force.Set(0, -world->GetGravity().y*area*density);
+        fixtureB->GetBody()->ApplyForce(buoyancy_force, fixtureB->GetBody()->GetPosition(), true);
+        
+        
+        b2Vec2 drag_force=-fixtureB->GetBody()->GetLinearVelocity();
+        float v=drag_force.Normalize();
+        
+        float A=4*b2_pi*r*r;
+        drag_force*=0.5*v*v*A*drag_coeff;
+        fixtureB->GetBody()->ApplyForce(drag_force, fixtureB->GetBody()->GetPosition(), true);
+
+        
+        ++it;
+    }
     
     
 }
@@ -466,7 +551,6 @@ void Game::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color&
     
     
     glPushMatrix();
-    
     glTranslatef(bodyPos.x, bodyPos.y, 0.0f);
     glRotatef(rot, 0.0f, 0.0f, 1.0f);
     glBegin(GL_LINE_LOOP);
@@ -488,11 +572,8 @@ void Game::DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, const b2C
     
     glTranslatef(bodyPos.x, bodyPos.y, 0.0f);
     glRotatef(rot, 0.0f, 0.0f, 1.0f);
-  
-    
-    
     glBegin(GL_TRIANGLE_FAN);
-
+    
     glColor4f(color.r, color.g, color.b, 0.8f);
     for (int i = 0; i < vertexCount; i++) {
         b2Vec2 v = vertices[i];
@@ -510,10 +591,10 @@ void Game::DrawCircle(const b2Vec2& center, float radius, const b2Color& color) 
     float theta = 0.0f;
     
     glPushMatrix();
-
+    
     
     glBegin(GL_LINE_LOOP);
- 
+    
     glColor4f(color.r, color.g, color.b, 0.5f);
     GLfloat glVertices[vertexCount * 2];
     for (int32 i = 0; i < k_segments; ++i) {
@@ -531,6 +612,8 @@ void Game::DrawSolidCircle(const b2Vec2& center, float radius, const b2Vec2& axi
     const float k_increment = 2.0f * b2_pi / k_segments;
     float theta = 0.0f;
     
+    
+    glPushMatrix();
     glBegin(GL_TRIANGLE_FAN);
     
     glColor4f(color.r, color.g, color.b, 0.5f);
@@ -541,7 +624,7 @@ void Game::DrawSolidCircle(const b2Vec2& center, float radius, const b2Vec2& axi
         theta += k_increment;
     }
     glEnd();
-    
+    glPopMatrix();
     
     
     
@@ -552,13 +635,12 @@ void Game::DrawSolidCircle(const b2Vec2& center, float radius, const b2Vec2& axi
 void Game::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& color) {
     
     
-    
-    glColor4f(color.r, color.g, color.b, 1);
-    
+    glPushMatrix();
     glBegin(GL_LINES);
-
+    glColor4f(color.r, color.g, color.b, 1);
     glVertex2f(p1.x , p1.y );
     glVertex2f(p2.x , p2.y );
     glEnd();
+    glPopMatrix();
     
 }
