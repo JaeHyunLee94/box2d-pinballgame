@@ -35,7 +35,7 @@ int init(){
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
     
-    WINDOW_WIDTH=800;
+    WINDOW_WIDTH=1000;
     WINDOW_HEIGHT=1000;
     
     window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "opengl_playground", NULL, NULL);
@@ -59,7 +59,7 @@ int init(){
     
     
     
-    glClearColor( 0.2, 0.2, 0.2, 1.0f);
+    glClearColor( 0.25, 0.25, 0.25, 1.0f);
     
 
     glEnable(GL_BLEND);
@@ -80,7 +80,7 @@ void setCamera(){
     gluPerspective(60.0, float(400)/float(400), 0.1, 1000.0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(0, 0, 50, 0, 0, 0, 0, 1, 0);
+    gluLookAt(0, 5, 70, 0, 5, 0, 0, 1, 0);
 
     glFlush();
     

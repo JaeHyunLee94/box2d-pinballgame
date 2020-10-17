@@ -10,6 +10,7 @@
 
 #include <box2d/box2d.h>
 #include "geometry.h"
+#include <map>
 //struct b2UserData
 //{
 //    b2Color color;
@@ -33,6 +34,7 @@ public:
     b2Body* m_ball;
     b2Body* ground = NULL;
     b2Body* m_obs_rotate;
+    b2Body* m_obs_rotate_tri;
     b2Body* m_obs_nail[7];
     b2Body* m_obs_mov_rect[3];
     b2Body* leftFlipper;
@@ -42,9 +44,12 @@ public:
     b2Body* m_water;
     b2Body* m_open1;
     b2Body* m_open2;
+    b2Body* m_sticky;
+    b2Body* m_prismatic;
     
     Myb2ContactListener my_listner;
     
+    std::map<b2Fixture*,b2Color> colormap;
     
     
 //    
@@ -60,7 +65,7 @@ public:
 
     b2RevoluteJoint* m_leftJoint;
     b2RevoluteJoint* m_rightJoint;
-    
+    b2PrismaticJoint* m_joint;
     b2Vec2 m_obs_mov_rect_speed;
     
     
@@ -80,12 +85,19 @@ public:
     int BodyCount=0;
     bool m_button = false;
     
+    
+    bool punch_up=true;
+    float punch_time=0.0f;
+    float punch_cycle=2.0f;
+    float punchSpeed=200.f;
+    
     void createMap();
     void createBox(float,float);
     void render();
     void step();
     
     void doFlip(int);
+    void doPunch();
     void checkReverse();
     void checkBlackHole();
     
@@ -104,7 +116,7 @@ public:
     void DrawPoint(const b2Vec2& p, float size, const b2Color& color);
     
     void checkBuoyancy();
-    
+    void checkSticky();
 //    void DrawString(int x, int y, const char* string, ...);
 //
 //    void DrawAABB(b2AABB* aabb, const b2Color& color);

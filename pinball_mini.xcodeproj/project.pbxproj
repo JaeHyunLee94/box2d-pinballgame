@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		87D425D3252B699D00C43156 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87D425D2252B699D00C43156 /* main.cpp */; };
 		87D425DC252B69A500C43156 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87D425DB252B69A500C43156 /* OpenGL.framework */; };
-		87D425E5252B6A1F00C43156 /* controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87D425E2252B6A1F00C43156 /* controller.cpp */; };
 		87D425E6252B6A1F00C43156 /* game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87D425E3252B6A1F00C43156 /* game.cpp */; };
 		87D425EB252B6A6600C43156 /* libbox2d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 87D425EA252B6A5C00C43156 /* libbox2d.a */; };
 		87D425F0252B704B00C43156 /* libGLEW.2.2.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 87D425EF252B704B00C43156 /* libGLEW.2.2.0.dylib */; };
@@ -48,8 +47,6 @@
 		87D425D2252B699D00C43156 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		87D425DB252B69A500C43156 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		87D425E0252B6A1F00C43156 /* game.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = game.hpp; sourceTree = "<group>"; };
-		87D425E1252B6A1F00C43156 /* controller.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = controller.hpp; sourceTree = "<group>"; };
-		87D425E2252B6A1F00C43156 /* controller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = controller.cpp; sourceTree = "<group>"; };
 		87D425E3252B6A1F00C43156 /* game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = game.cpp; sourceTree = "<group>"; };
 		87D425E4252B6A1F00C43156 /* signal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = signal.h; sourceTree = "<group>"; };
 		87D425E8252B6A2C00C43156 /* include */ = {isa = PBXFileReference; lastKnownFileType = folder; path = include; sourceTree = "<group>"; };
@@ -98,8 +95,6 @@
 		87D425D1252B699D00C43156 /* pinball_mini */ = {
 			isa = PBXGroup;
 			children = (
-				87D425E2252B6A1F00C43156 /* controller.cpp */,
-				87D425E1252B6A1F00C43156 /* controller.hpp */,
 				87D425E3252B6A1F00C43156 /* game.cpp */,
 				87D425E0252B6A1F00C43156 /* game.hpp */,
 				87D425E4252B6A1F00C43156 /* signal.h */,
@@ -180,7 +175,6 @@
 			files = (
 				87D425D3252B699D00C43156 /* main.cpp in Sources */,
 				87D425F7252E411F00C43156 /* geometry.cpp in Sources */,
-				87D425E5252B6A1F00C43156 /* controller.cpp in Sources */,
 				87D425E6252B6A1F00C43156 /* game.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -13,30 +13,31 @@
 #include <math.h>
 
 #include "geometry.h"
-
+#include "game.hpp"
 //class member variable
 
 
 
 void Myb2ContactListener::BeginContact(b2Contact *contact){
-    b2Fixture* fixtureA = contact->GetFixtureA();
-    b2Fixture* fixtureB = contact->GetFixtureB();
-
-    if ( fixtureA->IsSensor() && fixtureB->GetBody()->GetType() == b2_dynamicBody )
-        m_fixturePairs.insert( std::make_pair(fixtureA, fixtureB) );
-    else if ( fixtureB->IsSensor() && fixtureA->GetBody()->GetType() == b2_dynamicBody )
-        m_fixturePairs.insert( std::make_pair(fixtureB, fixtureA) );
+//    b2Fixture* fixtureA = contact->GetFixtureA();
+//    b2Fixture* fixtureB = contact->GetFixtureB();
+//
+////    m_fixturePairs.insert( std::make_pair(fixtureA, fixtureB) );
+//    if ( fixtureA->IsSensor() && fixtureB->GetBody()->GetType() == b2_dynamicBody )
+//        m_fixturePairs.insert( std::make_pair(fixtureA, fixtureB) );
+//    else if ( fixtureB->IsSensor() && fixtureA->GetBody()->GetType() == b2_dynamicBody )
+//        m_fixturePairs.insert( std::make_pair(fixtureB, fixtureA) );
 }
 
 void Myb2ContactListener:: EndContact(b2Contact* contact)
 {
-    b2Fixture* fixtureA = contact->GetFixtureA();
-    b2Fixture* fixtureB = contact->GetFixtureB();
-
-    if ( fixtureA->IsSensor() && fixtureB->GetBody()->GetType() == b2_dynamicBody )
-        m_fixturePairs.erase( std::make_pair(fixtureA, fixtureB) );
-    else if ( fixtureB->IsSensor() && fixtureA->GetBody()->GetType() == b2_dynamicBody )
-        m_fixturePairs.erase( std::make_pair(fixtureB, fixtureA) );
+//    b2Fixture* fixtureA = contact->GetFixtureA();
+//    b2Fixture* fixtureB = contact->GetFixtureB();
+//
+//    if ( fixtureA->IsSensor() && fixtureB->GetBody()->GetType() == b2_dynamicBody )
+//        m_fixturePairs.erase( std::make_pair(fixtureA, fixtureB) );
+//    else if ( fixtureB->IsSensor() && fixtureA->GetBody()->GetType() == b2_dynamicBody )
+//        m_fixturePairs.erase( std::make_pair(fixtureB, fixtureA) );
 }
 
 float Myb2ContactListener::IntersectArea(b2Fixture* rect, b2Fixture* circle,float L,float H){
