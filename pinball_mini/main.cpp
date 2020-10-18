@@ -14,6 +14,8 @@
 #include "game.hpp"
 #include "signal.h"
 
+
+
 GLFWwindow* window;
 Game* m_game;
 int WINDOW_WIDTH=0;
@@ -25,15 +27,9 @@ int init(){
         std::cout << "glfw init failed!!\n";
         return 1;
     }
-
-//    glfwWindowHint(GL_SAMPLES, 4);
-//    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-//    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-////    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-////    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-
+    
     
     WINDOW_WIDTH=1000;
     WINDOW_HEIGHT=1000;
@@ -45,14 +41,15 @@ int init(){
         glfwTerminate();
         return 1;
     }
-
+    
     glfwMakeContextCurrent(window);
     
+    
     glewExperimental = GL_TRUE;
-
+    
     GLenum errorCode = glewInit();
     if (GLEW_OK != errorCode) {
-
+        
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
@@ -61,9 +58,11 @@ int init(){
     
     glClearColor( 0.25, 0.25, 0.25, 1.0f);
     
-
+    
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+  
     
     return 0;
 }
@@ -73,19 +72,18 @@ int init(){
 
 void setCamera(){
     
-   
+    
     glLoadIdentity();
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(60.0, float(400)/float(400), 0.1, 1000.0);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+  
     gluLookAt(0, 5, 70, 0, 5, 0, 0, 1, 0);
-
+    
     glFlush();
     
     
-   
+    
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -100,7 +98,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         m_game=new Game();
         m_game->createMap();
     }
-        
+    
 }
 
 
@@ -114,23 +112,22 @@ int main(int argc, char ** argv) {
     m_game->createMap();
     
     glfwSetKeyCallback(window, key_callback);
-    
-    
-    
-    
+        
+   
     while (!glfwWindowShouldClose(window)) {
         setCamera();
         
+        
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+        
         m_game->step();
         m_game->render();
-       
+        
         glfwSwapBuffers(window);
         glfwPollEvents();
-
+        
     }
-
+    
     
     
     return 0;
